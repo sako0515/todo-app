@@ -21,7 +21,7 @@ export const addTodo = async (todo: Todo): Promise<Todo> => {
   return newTodo;
 };
 
-export const editTodo = async (id: number, newTitle: string): Promise<Todo> => {
+export const editTodo = async (id: string, newTitle: string): Promise<Todo> => {
   const res = await fetch(`http://localhost:3001/todos/${id}`, {
     method: "PUT",
     headers: {
@@ -34,7 +34,7 @@ export const editTodo = async (id: number, newTitle: string): Promise<Todo> => {
   return updatedTodo;
 };
 
-export const deleteTodo = async (id: number): Promise<Todo> => {
+export const deleteTodo = async (id: string): Promise<Todo> => {
   const res = await fetch(`http://localhost:3001/todos/${id}`, {
     method: "DELETE",
     headers: {
