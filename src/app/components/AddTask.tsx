@@ -1,13 +1,31 @@
 "use client";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { addTodo } from "../api";
+import { Todo } from "../types";
+import { v4 as uuidv4 } from 'uuid';
 
-export const AddTask = () => {
+interface AddTaskProps {
+  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
+}
+
+export const AddTask = ({ setTodos }: AddTaskProps) => {
   const [todoTitle, setTodoTitle] = useState<string>("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await addTodo({ id: Date.now(), title: todoTitle });
+    if (todoTitle.trim() === "") {
+      alert("タスクのタイトルを入力してください。");
+      return;
+    }
+    try {
+      const newTodo = { id: uuidv4(), title: todoTitle };
+      const res = await addTodo(newTodo);
+      setTodos((prevTodos) => [...prevTodos, newTodo]);
+      setTodoTitle("");
+    } catch (error) {
+      console.error("Failed to add todo:", error);
+      alert("タスクの追加に失敗しました。もう一度お試しください。");
+    }
   };
 
   return (

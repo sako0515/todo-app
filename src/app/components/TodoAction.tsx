@@ -5,9 +5,10 @@ import { deleteTodo, editTodo } from "../api";
 
 interface TodoProps {
   todo: Todo;
+  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
 }
 
-export const TodoAction = ({ todo }: TodoProps) => {
+export const TodoAction = ({ todo, setTodos }: TodoProps) => {
   const ref = useRef<HTMLInputElement>(null);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -24,12 +25,26 @@ export const TodoAction = ({ todo }: TodoProps) => {
   };
 
   const handleSave = async () => {
-    await editTodo(todo.id, editTitle);
-    setIsEditing(false);
+    try {
+      await editTodo(todo.id, editTitle);
+      setTodos((prevTodos) =>
+        prevTodos.map((t) => (t.id === todo.id ? { ...t, title: editTitle } : t))
+      );
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to edit todo:", error);
+      alert("タスクの編集に失敗しました。もう一度お試しください。");
+    }
   };
 
   const handleDelete = async () => {
-    await deleteTodo(todo.id);
+    try {
+      await deleteTodo(todo.id);
+      setTodos((prevTodos) => prevTodos.filter((t) => t.id !== todo.id));
+    } catch (error) {
+      console.error("Failed to delete todo:", error);
+      alert("タスクの削除に失敗しました。もう一度お試しください。");
+    }
   }
 
   return (
